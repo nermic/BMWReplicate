@@ -80,30 +80,6 @@ namespace BMWReplicate
 
         private bool ReplicateFiles(string SourcePath, string DestinationPath, bool includeSubs)
         {
-            //// Loop thru each file in the current directory and print it's name
-            ////System.IO.StreamWriter writer = new System.IO.StreamWriter(@"C:\Thabo\BMW\logFile.txt"); //open the file for writing.
-            //foreach (string fileName in Directory.GetFiles(SourcePath))
-            //{
-            //    Console.WriteLine(fileName);
-            //    using (StreamWriter sw = File.AppendText(@"C:\Thabo\BMW\logFile.txt"))
-            //    {
-            //        sw.WriteLine(fileName);
-            //    }
-
-            //}
-
-            //// If there is a subdirectory in the current directory, then recursively 
-            //// call FindFiles() method. The recursion will break when the innermost 
-            //// directory with no subdirectory is found.
-            //if (includeSubs)
-            //{
-            //    foreach (string directory in Directory.GetDirectories(SourcePath))
-            //    {
-            //        // Notice that FindFiles() is calling itself
-            //        DirectoryInfo directoryInfo = new DirectoryInfo(directory);
-            //        ReplicateFiles(directory, DestinationPath + directoryInfo.Name, includeSubs);
-            //    } 
-            //}
 
             SourcePath = SourcePath.EndsWith(@"\") ? SourcePath : SourcePath + @"\";
             DestinationPath = DestinationPath.EndsWith(@"\") ? DestinationPath : DestinationPath + @"\";
@@ -125,7 +101,7 @@ namespace BMWReplicate
 
                     foreach (string files in Directory.GetFiles(SourcePath))
                     {
-                       
+
                         FileInfo fileInfo = new FileInfo(files);
                         if (File.Exists(DestinationPath + fileInfo.Name))
                         {
@@ -139,7 +115,7 @@ namespace BMWReplicate
                                     sw.WriteLine(string.Format(@"Copy file from  {0} to {1}", SourcePath + fileInfo.Name, DestinationPath + fileInfo.Name));
                                 }
                             }
-                           
+
                         }
                         else
                         {
@@ -150,15 +126,18 @@ namespace BMWReplicate
                                 sw.WriteLine(string.Format(@"Copy file from  {0} to {1}", SourcePath + fileInfo.Name, DestinationPath + fileInfo.Name));
                             }
                         }
-                       
+
                     }
 
-                    foreach (string drs in Directory.GetDirectories(SourcePath))
+                    if (includeSubs)
                     {
-                        DirectoryInfo directoryInfo = new DirectoryInfo(drs);
-                        if (ReplicateFiles(drs, DestinationPath + directoryInfo.Name, includeSubs) == false)
+                        foreach (string drs in Directory.GetDirectories(SourcePath))
                         {
-                            return false;
+                            DirectoryInfo directoryInfo = new DirectoryInfo(drs);
+                            if (ReplicateFiles(drs, DestinationPath + directoryInfo.Name, includeSubs) == false)
+                            {
+                                return false;
+                            }
                         }
                     }
                 }
